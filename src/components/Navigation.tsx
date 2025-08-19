@@ -51,8 +51,12 @@ const Navigation = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost">Login</Button>
-            <Button variant="gradient">Sign Up</Button>
+            <Button variant="ghost" asChild>
+              <Link to="/login">Login</Link>
+            </Button>
+            <Button variant="gradient" asChild>
+              <Link to="/signup">Sign Up</Link>
+            </Button>
           </div>
 
           {/* Mobile Menu */}
@@ -80,11 +84,11 @@ const Navigation = () => {
                   </Link>
                 ))}
                 <div className="pt-4 space-y-2">
-                  <Button variant="ghost" className="w-full justify-start">
-                    Login
+                  <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link to="/login" onClick={() => setIsOpen(false)}>Login</Link>
                   </Button>
-                  <Button variant="gradient" className="w-full">
-                    Sign Up
+                  <Button variant="gradient" className="w-full" asChild>
+                    <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
                   </Button>
                 </div>
               </div>

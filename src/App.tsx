@@ -8,7 +8,8 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Challenges from "./pages/Challenges";
 import Profile from "./pages/Profile";
-
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/challenges" element={<Challenges />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
