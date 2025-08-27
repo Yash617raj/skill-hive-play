@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,15 +16,48 @@ const Signup = () => {
     confirmPassword: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Signup attempt:", formData);
-    // TODO: Implement actual signup logic with Supabase
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save JWT if your backend sends one
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+
+        alert("Account created successfully!");
+        console.log("Signup Success:", data);
+
+        // Redirect to dashboard
+        navigate("/dashboard");
+      } else {
+        alert(data.message || "Signup failed");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -126,25 +159,6 @@ const Signup = () => {
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-            </div>
-
-            <div className="flex items-start space-x-2">
-              <input
-                id="terms"
-                type="checkbox"
-                className="mt-1 rounded border-border"
-                required
-              />
-              <Label htmlFor="terms" className="text-sm leading-5">
-                I agree to the{" "}
-                <Link to="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-              </Label>
             </div>
 
             <Button type="submit" className="w-full" variant="gradient">

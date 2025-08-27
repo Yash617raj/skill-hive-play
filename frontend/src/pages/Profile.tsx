@@ -1,30 +1,63 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Trophy, 
-  Calendar, 
-  Code2, 
-  Send, 
-  Inbox, 
+import {
+  Trophy,
+  Calendar,
+  Code2,
+  Send,
+  Inbox,
   CheckCircle,
   XCircle,
   Star,
   Target,
   Award,
   TrendingUp,
-  Edit
+  Edit,
+  LogOut,
 } from "lucide-react";
 
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 const Profile = () => {
-  const [user] = useState({
-    name: "Alex Developer",
-    username: "alex_codes",
-    email: "alex@skillhive.dev",
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-muted-foreground">
+          Please login to view your profile.
+        </p>
+      </div>
+    );
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  // Static demo data – replace later with API calls if needed
+  const stat = {
+    name: user.fullName, // ✅ pulled from AuthContext
+    username: user.email.split("@")[0],
+    email: user.email,
+    skills: [
+      { name: "JavaScript", level: 80 },
+      { name: "React", level: 75 },
+      { name: "Node.js", level: 70 },
+    ],
     joinDate: "March 2024",
     level: "Intermediate",
     rank: 1247,
@@ -35,14 +68,7 @@ const Profile = () => {
     challengesWon: 33,
     challengesSent: 28,
     challengesReceived: 17,
-    favoriteLanguages: ["JavaScript", "Python", "TypeScript"],
-    skills: [
-      { name: "Algorithms", level: 75 },
-      { name: "Data Structures", level: 85 },
-      { name: "Problem Solving", level: 70 },
-      { name: "Code Quality", level: 90 }
-    ]
-  });
+  };
 
   const sentChallenges = [
     {
@@ -51,7 +77,7 @@ const Profile = () => {
       recipient: "sarah_codes",
       status: "pending",
       sentDate: "2 days ago",
-      difficulty: "Intermediate"
+      difficulty: "Intermediate",
     },
     {
       id: 2,
@@ -59,7 +85,7 @@ const Profile = () => {
       recipient: "mike_dev",
       status: "accepted",
       sentDate: "1 week ago",
-      difficulty: "Beginner"
+      difficulty: "Beginner",
     },
     {
       id: 3,
@@ -67,8 +93,8 @@ const Profile = () => {
       recipient: "emma_tech",
       status: "completed",
       sentDate: "2 weeks ago",
-      difficulty: "Advanced"
-    }
+      difficulty: "Advanced",
+    },
   ];
 
   const receivedChallenges = [
@@ -78,7 +104,7 @@ const Profile = () => {
       sender: "john_coder",
       status: "pending",
       receivedDate: "1 day ago",
-      difficulty: "Intermediate"
+      difficulty: "Intermediate",
     },
     {
       id: 5,
@@ -86,27 +112,57 @@ const Profile = () => {
       sender: "lisa_dev",
       status: "completed",
       receivedDate: "5 days ago",
-      difficulty: "Beginner"
-    }
+      difficulty: "Beginner",
+    },
   ];
 
   const achievements = [
-    { icon: Trophy, title: "First Challenge", description: "Completed your first challenge", earned: true },
-    { icon: Target, title: "Streak Master", description: "Maintain a 7-day streak", earned: true },
-    { icon: Award, title: "Problem Solver", description: "Win 25 challenges", earned: true },
-    { icon: Star, title: "Rising Star", description: "Reach top 1500 rank", earned: true },
-    { icon: Code2, title: "Code Warrior", description: "Win 50 challenges", earned: false },
-    { icon: TrendingUp, title: "Elite Coder", description: "Reach top 500 rank", earned: false }
+    {
+      icon: Trophy,
+      title: "First Challenge",
+      description: "Completed your first challenge",
+      earned: true,
+    },
+    {
+      icon: Target,
+      title: "Streak Master",
+      description: "Maintain a 7-day streak",
+      earned: true,
+    },
+    {
+      icon: Award,
+      title: "Problem Solver",
+      description: "Win 25 challenges",
+      earned: true,
+    },
+    {
+      icon: Star,
+      title: "Rising Star",
+      description: "Reach top 1500 rank",
+      earned: true,
+    },
+    {
+      icon: Code2,
+      title: "Code Warrior",
+      description: "Win 50 challenges",
+      earned: false,
+    },
+    {
+      icon: TrendingUp,
+      title: "Elite Coder",
+      description: "Reach top 500 rank",
+      earned: false,
+    },
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-warning/10 text-warning border-warning/20";
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "accepted":
-        return "bg-primary/10 text-primary border-primary/20";
+        return "bg-blue-100 text-blue-700 border-blue-200";
       case "completed":
-        return "bg-success/10 text-success border-success/20";
+        return "bg-green-100 text-green-700 border-green-200";
       default:
         return "bg-muted";
     }
@@ -115,18 +171,18 @@ const Profile = () => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Beginner":
-        return "bg-success/10 text-success border-success/20";
+        return "bg-green-100 text-green-700 border-green-200";
       case "Intermediate":
-        return "bg-warning/10 text-warning border-warning/20";
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "Advanced":
-        return "bg-destructive/10 text-destructive border-destructive/20";
+        return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-muted";
     }
   };
 
-  const winRate = Math.round((user.challengesWon / user.totalChallenges) * 100);
-  const xpProgress = ((user.totalXP % 1000) / 1000) * 100;
+  const winRate = Math.round((stat.challengesWon / stat.totalChallenges) * 100);
+  const xpProgress = ((stat.totalXP % 1000) / 1000) * 100;
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -136,41 +192,60 @@ const Profile = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <Avatar className="h-24 w-24">
               <AvatarImage src="/placeholder-avatar.jpg" />
-              <AvatarFallback className="text-2xl bg-gradient-primary text-white">
-                {user.name.split(' ').map(n => n[0]).join('')}
+              <AvatarFallback className="text-2xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                {stat.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1 space-y-4">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-2xl font-bold">{user.name}</h1>
-                  <Badge className={getDifficultyColor(user.level)} variant="outline">
-                    {user.level}
+                  <h1 className="text-2xl font-bold">{stat.name}</h1>
+                  <Badge
+                    className={getDifficultyColor(stat.level)}
+                    variant="outline"
+                  >
+                    {stat.level}
                   </Badge>
                 </div>
-                <p className="text-muted-foreground">@{user.username}</p>
+                <p className="text-muted-foreground">{stat.email}</p>
+                <p className="text-muted-foreground">@{stat.username}</p>
                 <p className="text-sm text-muted-foreground">
-                  Member since {user.joinDate} • Rank #{user.rank}
+                  Member since {stat.joinDate} • Rank #{stat.rank}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{user.totalXP}</div>
+                  <div className="text-2xl font-bold text-primary">
+                    {stat.totalXP}
+                  </div>
                   <div className="text-sm text-muted-foreground">Total XP</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-success">{winRate}%</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {winRate}%
+                  </div>
                   <div className="text-sm text-muted-foreground">Win Rate</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-warning">{user.streak}</div>
-                  <div className="text-sm text-muted-foreground">Day Streak</div>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {stat.streak}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Day Streak
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent">{user.totalChallenges}</div>
-                  <div className="text-sm text-muted-foreground">Challenges</div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {stat.totalChallenges}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Challenges
+                  </div>
                 </div>
               </div>
             </div>
@@ -178,6 +253,10 @@ const Profile = () => {
             <Button variant="outline" className="self-start">
               <Edit className="mr-2 h-4 w-4" />
               Edit Profile
+            </Button>
+            <Button variant="destructive" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </Button>
           </div>
         </CardContent>
@@ -188,10 +267,12 @@ const Profile = () => {
         <Card className="shadow-card">
           <CardHeader>
             <CardTitle>Skill Progress</CardTitle>
-            <CardDescription>Your development across different areas</CardDescription>
+            <CardDescription>
+              Your development across different areas
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {user.skills.map((skill) => (
+            {stat.skills.map((skill) => (
               <div key={skill.name} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">{skill.name}</span>
@@ -215,18 +296,24 @@ const Profile = () => {
                   key={index}
                   className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
                     achievement.earned
-                      ? "bg-success/5 border-success/20"
+                      ? "bg-green-50 border-green-200"
                       : "bg-muted/30 border-muted opacity-60"
                   }`}
                 >
-                  <achievement.icon 
+                  <achievement.icon
                     className={`h-6 w-6 ${
-                      achievement.earned ? "text-success" : "text-muted-foreground"
+                      achievement.earned
+                        ? "text-green-600"
+                        : "text-muted-foreground"
                     }`}
                   />
                   <div>
-                    <div className="font-medium text-sm">{achievement.title}</div>
-                    <div className="text-xs text-muted-foreground">{achievement.description}</div>
+                    <div className="font-medium text-sm">
+                      {achievement.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {achievement.description}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -242,11 +329,11 @@ const Profile = () => {
           <TabsList>
             <TabsTrigger value="sent" className="flex items-center gap-2">
               <Send className="h-4 w-4" />
-              Sent ({user.challengesSent})
+              Sent ({stat.challengesSent})
             </TabsTrigger>
             <TabsTrigger value="received" className="flex items-center gap-2">
               <Inbox className="h-4 w-4" />
-              Received ({user.challengesReceived})
+              Received ({stat.challengesReceived})
             </TabsTrigger>
           </TabsList>
         </div>
@@ -263,13 +350,25 @@ const Profile = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge className={getDifficultyColor(challenge.difficulty)} variant="outline">
+                    <Badge
+                      className={getDifficultyColor(challenge.difficulty)}
+                      variant="outline"
+                    >
                       {challenge.difficulty}
                     </Badge>
-                    <Badge className={getStatusColor(challenge.status)} variant="outline">
-                      {challenge.status === "completed" && <CheckCircle className="h-3 w-3 mr-1" />}
-                      {challenge.status === "pending" && <Calendar className="h-3 w-3 mr-1" />}
-                      {challenge.status === "accepted" && <Code2 className="h-3 w-3 mr-1" />}
+                    <Badge
+                      className={getStatusColor(challenge.status)}
+                      variant="outline"
+                    >
+                      {challenge.status === "completed" && (
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                      )}
+                      {challenge.status === "pending" && (
+                        <Calendar className="h-3 w-3 mr-1" />
+                      )}
+                      {challenge.status === "accepted" && (
+                        <Code2 className="h-3 w-3 mr-1" />
+                      )}
                       {challenge.status}
                     </Badge>
                   </div>
@@ -291,12 +390,22 @@ const Profile = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge className={getDifficultyColor(challenge.difficulty)} variant="outline">
+                    <Badge
+                      className={getDifficultyColor(challenge.difficulty)}
+                      variant="outline"
+                    >
                       {challenge.difficulty}
                     </Badge>
-                    <Badge className={getStatusColor(challenge.status)} variant="outline">
-                      {challenge.status === "completed" && <CheckCircle className="h-3 w-3 mr-1" />}
-                      {challenge.status === "pending" && <Calendar className="h-3 w-3 mr-1" />}
+                    <Badge
+                      className={getStatusColor(challenge.status)}
+                      variant="outline"
+                    >
+                      {challenge.status === "completed" && (
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                      )}
+                      {challenge.status === "pending" && (
+                        <Calendar className="h-3 w-3 mr-1" />
+                      )}
                       {challenge.status}
                     </Badge>
                     {challenge.status === "pending" && (
@@ -305,7 +414,7 @@ const Profile = () => {
                           <XCircle className="h-3 w-3 mr-1" />
                           Decline
                         </Button>
-                        <Button variant="gradient" size="sm">
+                        <Button variant="default" size="sm">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           Accept
                         </Button>

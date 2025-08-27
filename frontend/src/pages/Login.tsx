@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link,useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import {useAuth} from "@/context/AuthContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,10 +14,56 @@ const Login = () => {
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+  const {login} = useAuth();
+
+  useEffect(()=>{
+    // Check if user is already logged in
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    } 
+  },[navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", formData);
-    // TODO: Implement actual login logic with Supabase
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Login successful!");
+        console.log("Login Success:", data);
+
+        
+      const userData = {
+        id: data.user.id,
+        fullName: data.user.fullName,
+        email: data.user.email,
+        token: data.token, // ✅ store token inside user object
+      };
+
+        // Save JWT token (localStorage/sessionStorage)
+         localStorage.setItem("token", data.token);
+         localStorage.setItem("user", JSON.stringify(data.user));
+
+
+         login(userData);
+
+         navigate("/dashboard");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

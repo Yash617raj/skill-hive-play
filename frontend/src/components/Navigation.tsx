@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Code2, Trophy, User, MessageSquare, Home } from "lucide-react";
+import { Menu, Code2, Trophy, User, Home } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth(); 
 
   const navItems = [
     { to: "/", label: "Home", icon: Home },
@@ -49,14 +51,25 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Auth Buttons / User Info */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="gradient" asChild>
-              <Link to="/signup">Sign Up</Link>
-            </Button>
+            {user ? (
+              <>
+                <span className="font-medium capitalize">Hi, {user.fullName}</span>
+                <Button variant="ghost" onClick={logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button variant="gradient" asChild>
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -83,13 +96,43 @@ const Navigation = () => {
                     <span>{item.label}</span>
                   </Link>
                 ))}
+
+                {/* Mobile Auth */}
                 <div className="pt-4 space-y-2">
-                  <Button variant="ghost" className="w-full justify-start" asChild>
-                    <Link to="/login" onClick={() => setIsOpen(false)}>Login</Link>
-                  </Button>
-                  <Button variant="gradient" className="w-full" asChild>
-                    <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
-                  </Button>
+                  {user ? (
+                    <>
+                      <span className="block font-medium px-3">
+                        Hi, {user.fullName}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => {
+                          logout();
+                          setIsOpen(false);
+                        }}
+                      >
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        asChild
+                      >
+                        <Link to="/login" onClick={() => setIsOpen(false)}>
+                          Login
+                        </Link>
+                      </Button>
+                      <Button variant="gradient" className="w-full" asChild>
+                        <Link to="/signup" onClick={() => setIsOpen(false)}>
+                          Sign Up
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>

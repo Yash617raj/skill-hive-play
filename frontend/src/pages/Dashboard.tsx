@@ -19,7 +19,7 @@ import IssueChallenge from "@/components/IssueChallenge";
 
 const Dashboard = () => {
   const [user] = useState({
-    name: "Alex Developer",
+    name: "Yash Raj",
     level: "Intermediate",
     rank: 1247,
     streak: 7,
